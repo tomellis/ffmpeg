@@ -93,6 +93,7 @@ RUN     buildDeps="autoconf \
                    tar \
                    xcb-proto \
                    yasm \
+                   snappy-dev \
                    zlib-dev" && \
         apk add --no-cache --update ${buildDeps}
 ## libvmaf https://github.com/Netflix/vmaf
@@ -553,6 +554,7 @@ RUN  \
         --enable-shared \
         --enable-small \
         --enable-version3 \
+        --enable-libsnappy \
         --extra-cflags="-I${PREFIX}/include" \
         --extra-ldflags="-L${PREFIX}/lib" \
         --extra-libs=-ldl \
@@ -587,6 +589,9 @@ LABEL       org.opencontainers.image.authors="julien@rottenberg.info" \
             org.opencontainers.image.source=https://github.com/jrottenberg/ffmpeg
 
 ENV         LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+
+# Pull in missing library for libsnappy
+COPY --from=build /usr/lib/libsnappy.so /usr/lib/libsnappy.so.1
 
 CMD         ["--help"]
 ENTRYPOINT  ["ffmpeg"]
